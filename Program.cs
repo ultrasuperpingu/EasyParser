@@ -26,7 +26,7 @@ Symbol-> (IDENTIFIER | (BRACKETOPEN Subrule BRACKETCLOSE) ) UNARYOPER ?;
 ";
 
 var node = new Parser().Parse(grammarStr);
-if(node.Length != grammarStr.Length)
+if(node.Length != grammarStr.Length && node.LongestMatch != null)
 {
 	var line = grammarStr.Take(node.LongestMatch.Length).Count(c => c == '\n') + 1;
 	var posLine =  grammarStr.Select((value, index) => new { value, index })
