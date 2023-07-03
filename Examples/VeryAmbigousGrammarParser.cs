@@ -18,6 +18,7 @@ namespace EasyParser.Examples
 			Terminal END = new RegexTerminal(@"end");
 			Terminal TEST1 = new RegexTerminal(@"TEST1");
 			Terminal TEST2 = new RegexTerminal(@"TEST0");
+			Terminal _EOF_ = new RegexTerminal(@"$");
 			Concat List = new Concat();
 			Start = new Concat();
 			Terminal WHITESPACE = new RegexTerminal(@"\G\s+");
@@ -30,6 +31,8 @@ namespace EasyParser.Examples
 			TEST1.Name="TEST1";
 
 			TEST2.Name="TEST2";
+
+			_EOF_.Name="_EOF_";
 
 			List.Name="List";
 			Concat concat1 = new Concat();
@@ -48,16 +51,19 @@ namespace EasyParser.Examples
 			List.Symbols.Add(concat1);
 
 			Start.Name="Start";
-			Choice choice5 = new Choice();
-			Concat concat6 = new Concat();
-			concat6.Symbols.Add(List);
-			concat6.Symbols.Add(TEST1);
-			choice5.Symbols.Add(concat6);
+			Concat concat5 = new Concat();
+			Choice choice6 = new Choice();
 			Concat concat7 = new Concat();
 			concat7.Symbols.Add(List);
-			concat7.Symbols.Add(TEST2);
-			choice5.Symbols.Add(concat7);
-			Start.Symbols.Add(choice5);
+			concat7.Symbols.Add(TEST1);
+			choice6.Symbols.Add(concat7);
+			Concat concat8 = new Concat();
+			concat8.Symbols.Add(List);
+			concat8.Symbols.Add(TEST2);
+			choice6.Symbols.Add(concat8);
+			concat5.Symbols.Add(choice6);
+			concat5.Symbols.Add(_EOF_);
+			Start.Symbols.Add(concat5);
 
 			WHITESPACE.Name="WHITESPACE";
 

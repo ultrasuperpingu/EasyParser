@@ -8,7 +8,7 @@ using EasyParser.Examples;
 using EasyParser.ParserRules;
 
 //GenerateBNFGrammarParserCode();
-//GenerateVeryAmbiguousGrammarParserCode();
+GenerateVeryAmbiguousGrammarParserCode();
 
 
 var listStr = "toto list list toto end TEST1";
@@ -77,8 +77,9 @@ void GenerateVeryAmbiguousGrammarParserCode()
 		END -> @""end"";
 		TEST1 -> @""TEST1"";
 		TEST2 -> @""TEST0"";
+		_EOF_ -> @""$"";
 		List->ID? (ID|LIST) LIST ID* END;
-		Start -> (List TEST1|List TEST2);
+		Start -> (List TEST1|List TEST2) _EOF_;
 		WHITESPACE -> @""\G\s+"";
 ";
 	GenerateParserCode(grammarStr);
