@@ -10,112 +10,109 @@ namespace EasyParser
 {
     public class Parser
 	{
-		public Concat Grammar = null;
+		public Concat Start = null;
 		List<Terminal> Skips = new List<Terminal>();
-		//Decls
+		
 		public Parser()
 		{
 			Terminal BRACKETOPEN = new RegexTerminal(@"\(");
-			BRACKETOPEN.Name="BRACKETOPEN";
 			Terminal BRACKETCLOSE = new RegexTerminal(@"\)");
-			BRACKETCLOSE.Name="BRACKETCLOSE";
 			Terminal IDENTIFIER = new RegexTerminal(@"[a-zA-Z_][a-zA-Z0-9_]*");
-			IDENTIFIER.Name="IDENTIFIER";
 			Terminal ARROW = new RegexTerminal(@"->");
-			ARROW.Name="ARROW";
 			Terminal EOF = new RegexTerminal(@"$");
-			EOF.Name="EOF";
 			Terminal STRING = new RegexTerminal(@"\""(\\\""|[^\""])*\""");
-			STRING.Name="STRING";
 			Terminal VERBATIM_STRING = new RegexTerminal(@"(R|@)\""(\""\""|[^\""])*\""");
-			VERBATIM_STRING.Name="VERBATIM_STRING";
 			Terminal PIPE = new RegexTerminal(@"\|");
-			PIPE.Name="PIPE";
 			Terminal UNARYOPER = new RegexTerminal(@"(\*|\+|\?)");
+			Terminal SEMICOLON = new RegexTerminal(@";");
+			Start = new Concat();
+			Concat Production = new Concat();
+			Concat Rule = new Concat();
+			Concat Subrule = new Concat();
+			Concat ConcatRule = new Concat();
+			Concat Symbol = new Concat();
+			BRACKETOPEN.Name="BRACKETOPEN";
+
+			BRACKETCLOSE.Name="BRACKETCLOSE";
+
+			IDENTIFIER.Name="IDENTIFIER";
+
+			ARROW.Name="ARROW";
+
+			EOF.Name="EOF";
+
+			STRING.Name="STRING";
+
+			VERBATIM_STRING.Name="VERBATIM_STRING";
+
+			PIPE.Name="PIPE";
+
 			UNARYOPER.Name="UNARYOPER";
-			Terminal SEMICOLON = new RegexTerminal(";");
+
 			SEMICOLON.Name="SEMICOLON";
-			Terminal SHARPSHARP = new RegexTerminal("##");
-			SEMICOLON.Name="SHARPSHARP";
-			Terminal PLOUP = new RegexTerminal("PLOUP");
-			SEMICOLON.Name="PLOUP";
+
+			Start.Name="Start";
+			Concat concat1 = new Concat();
+			ZeroOrMore unary2 = new ZeroOrMore();
+			unary2.Symbol=Production;
+			concat1.Symbols.Add(unary2);
+			concat1.Symbols.Add(EOF);
+			Start.Symbols.Add(concat1);
+
+			Production.Name="Production";
+			Concat concat3 = new Concat();
+			concat3.Symbols.Add(IDENTIFIER);
+			concat3.Symbols.Add(ARROW);
+			concat3.Symbols.Add(Rule);
+			concat3.Symbols.Add(SEMICOLON);
+			Production.Symbols.Add(concat3);
+
+			Rule.Name="Rule";
+			Choice choice4 = new Choice();
+			choice4.Symbols.Add(VERBATIM_STRING);
+			choice4.Symbols.Add(STRING);
+			choice4.Symbols.Add(Subrule);
+			Rule.Symbols.Add(choice4);
+
+			Subrule.Name="Subrule";
+			Concat concat5 = new Concat();
+			concat5.Symbols.Add(ConcatRule);
+			ZeroOrMore unary6 = new ZeroOrMore();
+			Concat concat7 = new Concat();
+			concat7.Symbols.Add(PIPE);
+			concat7.Symbols.Add(ConcatRule);
+			unary6.Symbol = concat7;
+			concat5.Symbols.Add(unary6);
+			Subrule.Symbols.Add(concat5);
+
+			ConcatRule.Name="ConcatRule";
+			OneOrMore unary8 = new OneOrMore();
+			unary8.Symbol=Symbol;
+			ConcatRule.Symbols.Add(unary8);
+
+			Symbol.Name="Symbol";
+			Concat concat9 = new Concat();
+			Choice choice10 = new Choice();
+			choice10.Symbols.Add(IDENTIFIER);
+			Concat concat11 = new Concat();
+			concat11.Symbols.Add(BRACKETOPEN);
+			concat11.Symbols.Add(Subrule);
+			concat11.Symbols.Add(BRACKETCLOSE);
+			choice10.Symbols.Add(concat11);
+			concat9.Symbols.Add(choice10);
+			Optional unary12 = new Optional();
+			unary12.Symbol=UNARYOPER;
+			concat9.Symbols.Add(unary12);
+			Symbol.Symbols.Add(concat9);
 
 			Terminal WHITESPACES = new RegexTerminal(@"\G\s+");
-			SEMICOLON.Name="WHITESPACES";
+
+
 			Skips.Add(WHITESPACES);
-
-
-
-			//Production->IDENTIFIER ARROW Rule;
-			//Rule->VERBATIM_STRING | STRING | Subrule;
-			//Subrule->ConcatRule(PIPE ConcatRule)*;
-			//ConcatRule->Symbol+;
-			//Symbol-> (IDENTIFIER | (BRACKETOPEN Subrule BRACKETCLOSE) ) UNARYOPER ?;
-
-			Concat subrule = new Concat();
-			subrule.Name = "SubRule";
-
-			//Symbol-> (IDENTIFIER | (BRACKETOPEN Subrule BRACKETCLOSE) ) UNARYOPER ?;
-			Concat symbol = new Concat();
-			symbol.Name="Symbol";
-			Choice idOrBracket = new Choice();
-			//idOrBracket.Name = "idOrBracket";
-			Concat bracket = new Concat();
-			//bracket.Name = "bracket";
-			bracket.Symbols.Add(BRACKETOPEN);
-			bracket.Symbols.Add(subrule);
-			bracket.Symbols.Add(BRACKETCLOSE);
-			idOrBracket.Symbols.Add(IDENTIFIER);
-			idOrBracket.Symbols.Add(bracket);
-			Optional unaryOption = new Optional();
-			//unaryOption.Name="unaryOption";
-			unaryOption.Symbol = UNARYOPER;
-			symbol.Symbols.Add(idOrBracket);
-			symbol.Symbols.Add(unaryOption);
-
-			//ConcatRule->Symbol+;
-			OneOrMore concatRule = new OneOrMore();
-			concatRule.Name = "ConcatRule";
-			concatRule.Symbol = symbol;
-
-			//Subrule->ConcatRule(PIPE ConcatRule)*;
-			ZeroOrMore pipeConcatStar = new ZeroOrMore();
-			//pipeConcatStar.Name="pipeConcatStar";
-			Concat pipeConcat = new Concat();
-			//pipeConcat.Name="pipeConcat";
-			pipeConcat.Symbols.Add(PIPE);
-			pipeConcat.Symbols.Add(concatRule);
-			pipeConcatStar.Symbol = pipeConcat;
-
-			subrule.Symbols.Add(concatRule);
-			subrule.Symbols.Add(pipeConcatStar);
-
-
-			//Rule->VERBATIM_STRING | STRING | Subrule;
-			Choice rule = new Choice();
-			rule.Symbols.Add(VERBATIM_STRING);
-			rule.Symbols.Add(STRING);
-			rule.Symbols.Add(subrule);
-			rule.Name = "Rule";
-
-			//Production->IDENTIFIER ARROW Rule SEMICOLON;
-			Concat production = new Concat();
-			production.Name = "Production";
-			production.Symbols.Add(IDENTIFIER);
-			production.Symbols.Add(ARROW);
-			production.Symbols.Add(rule);
-			production.Symbols.Add(SEMICOLON);
-
-			Grammar = new Concat();
-			Grammar.Name = "Grammar";
-			ZeroOrMore produtionStar = new ZeroOrMore();
-			produtionStar.Symbol = production;
-			Grammar.Symbols.Add(produtionStar);
-			Console.WriteLine(Grammar.ToString());
 		}
 		public ParseNode Parse(string input)
 		{
-			return Grammar.Parse(input, 0, Skips);
+			return Start.Parse(input, 0, Skips);
 		}
 	}
 }

@@ -182,7 +182,7 @@ namespace EasyParser
 			string space = "".PadLeft(indent, ' ');
 
 			sb.Append(space);
-			sb.AppendLine(node.Text);
+			sb.AppendLine(node.Text + " rule="+node.Symbol.ToString());
 
 			foreach (ParseNode n in node.Nodes)
 				PrintNode(sb, n, indent + 2);

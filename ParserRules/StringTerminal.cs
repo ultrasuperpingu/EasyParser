@@ -14,7 +14,7 @@ namespace EasyParser.ParserRules
 
 		protected override ParseNode Parse(string input, int index)
 		{
-			if (input.Substring(index, Pattern.Length) == Pattern)
+			if (index + Pattern.Length < input.Length && input.Substring(index, Pattern.Length) == Pattern)
 			{
 				ParseNode node = new ParseNode(this, input, index, Pattern.Length);
 				node.Success = true;
