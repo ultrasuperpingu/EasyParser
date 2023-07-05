@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace Octopartite.Examples
 {
+	/// <summary>
+	/// Really simple unambiguous grammar (LL1)
+	/// </summary>
 	public class Example1 : AbstractExample
 	{
-		
-
 		public Example1()
 		{
 			Rule.DefaultBacktrackCardinalityOps = false;

@@ -7,6 +7,15 @@ using System.Threading.Tasks;
 
 namespace Octopartite.Examples
 {
+	/// <summary>
+	/// This grammar is not LL1. The parser have to use the callstack to backtrack.
+	/// <br/>
+	/// For example, when trying to parse "[test, test2, test3]]":<br/>
+	/// It parse a first time the DelimitedList, then fails because it is not followed by a SQUAREBRACKETOPEN
+	/// and pop the parsed DelimitedList, and then parses it again and success while finding the SQUAREBRACKETCLOSE<br/>
+	/// <br/>
+	/// This is of course a poorly design grammar and should be avoided but demonstrates the possibilities of the parser generator.
+	/// </summary>
 	public class Example3 : AbstractExample
 	{
 		public Example3()

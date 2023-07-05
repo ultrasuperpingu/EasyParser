@@ -87,13 +87,16 @@ namespace Octopartite.ParserRules
 					node.Length = backtrackres.Index + backtrackres.Length - node.Index;
 					return node;
 				}
-				node.Success = true;
-				node.symbolIndex--;
-				var removed = node.Nodes[node.symbolIndex];
-				node.Nodes.RemoveAt(node.symbolIndex);
-				node.Length -= length;
-				if(removed.Skipped != null)
-					node.Length -= removed.Skipped.Sum(s=>s.Length);
+				if (BacktrackCardinalityOps)
+				{
+					node.Success = true;
+					node.symbolIndex--;
+					var removed = node.Nodes[node.symbolIndex];
+					node.Nodes.RemoveAt(node.symbolIndex);
+					node.Length -= length;
+					if (removed.Skipped != null)
+						node.Length -= removed.Skipped.Sum(s => s.Length);
+				}
 			}
 			else // < min and > 0: error
 			{

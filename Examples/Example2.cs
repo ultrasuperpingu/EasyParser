@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Octopartite.Examples
 {
+	/// <summary>
+	/// Slightly more complicated unambiguous grammar (LL1)
+	/// </summary>
 	public class Example2 : AbstractExample
 	{
 		public Example2()

@@ -7,12 +7,19 @@ using System.Threading.Tasks;
 
 namespace Octopartite.Examples
 {
+	/// <summary>
+	/// This grammar is ambigous because END token can be match by an ID token.<br/><br/>
+	/// So this need to allow Cardinal Operators backtracking.<br/>
+	/// By doing that, the end match as an ID is backtracked and then parsed correctly as an END token.<br/>
+	/// <br/>
+	/// Again, could (and should) be avoided by more carrefully written terminals regexes.
+	/// </summary>
 	public class Example4 : AbstractExample
 	{
 		public Example4()
 		{
-			Rule.DefaultBacktrackCardinalityOps = false;
-			Rule.DefaultBacktrackChoices = true;
+			Rule.DefaultBacktrackCardinalityOps = true;
+			Rule.DefaultBacktrackChoices = false;
 
 			// Start Generated Code
 			Terminal LIST = new RegexTerminal(@"list");

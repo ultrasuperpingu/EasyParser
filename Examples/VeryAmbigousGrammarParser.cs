@@ -7,6 +7,9 @@ using Octopartite.ParserRules;
 
 namespace Octopartite.Examples
 {
+	/// <summary>
+	/// A really ambiguous grammar that can be parsed...
+	/// </summary>
 	public class VeryAmbigousGrammarParser : AbstractExample
 	{
 		public VeryAmbigousGrammarParser()
