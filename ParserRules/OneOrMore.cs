@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 
-namespace EasyParser.ParserRules
+namespace Octopartite.ParserRules
 {
 	public class OneOrMore : MinMaxOccurence
 	{

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EasyParser.ParserRules
+namespace Octopartite.ParserRules
 {
 	public abstract class NonTerminal : Rule
 	{

@@ -4,17 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using EasyParser.ParserRules;
+using Octopartite.ParserRules;
 
-namespace EasyParser
+namespace Octopartite
 {
-    public class Parser
+    public class GrammarParser
 	{
 		public Concat Start = null;
 		List<Terminal> Skips = new List<Terminal>();
 		
-		public Parser()
+		public GrammarParser()
 		{
+			ParserRules.Rule.DefaultBacktrackCardinalityOps = true;
+			ParserRules.Rule.DefaultBacktrackChoices = true;
+
+			// Start Generated Code
 			Terminal BRACKETOPEN = new RegexTerminal(@"\(");
 			Terminal BRACKETCLOSE = new RegexTerminal(@"\)");
 			Terminal IDENTIFIER = new RegexTerminal(@"[a-zA-Z_][a-zA-Z0-9_]*");
@@ -106,13 +110,36 @@ namespace EasyParser
 			Symbol.Symbols.Add(concat9);
 
 			Terminal WHITESPACES = new RegexTerminal(@"\G\s+");
-
+			// End Generated Code
 
 			Skips.Add(WHITESPACES);
 		}
 		public ParseNode Parse(string input)
 		{
 			return Start.Parse(input, 0, Skips);
+		}
+		public static void GenerateParserCode()
+		{
+			var grammarStr = @"
+				BRACKETOPEN -> @""\("";
+				BRACKETCLOSE -> @""\)"";
+				IDENTIFIER -> @""[a-zA-Z_][a-zA-Z0-9_]*"";
+				ARROW -> @""->"";
+				EOF -> @""$"";
+				STRING -> @""\""""(\\\""""|[^\""""])*\"""""";
+				VERBATIM_STRING -> @""(R|@)\""""(\""""\""""|[^\""""])*\"""""";
+				PIPE -> @""\|"";
+				UNARYOPER -> @""(\*|\+|\?)"";
+				SEMICOLON -> @"";"";
+				WHITESPACE -> @""\G\s+"";
+				Start -> Production * EOF;
+				Production->IDENTIFIER ARROW Rule SEMICOLON;
+				Rule->VERBATIM_STRING | STRING | Subrule;
+				Subrule->ConcatRule(PIPE ConcatRule)*;
+				ConcatRule->Symbol+;
+				Symbol-> (IDENTIFIER | (BRACKETOPEN Subrule BRACKETCLOSE) ) UNARYOPER ?;
+			";
+			GrammarUtil.GenerateParserCode(grammarStr);
 		}
 	}
 }

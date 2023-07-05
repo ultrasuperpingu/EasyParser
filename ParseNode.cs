@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using EasyParser.ParserRules;
+using Octopartite.ParserRules;
 
-namespace EasyParser
+namespace Octopartite
 {
-    public class ParseNode
+	public class ParseNode
 	{
 		public ParseNode(Rule s, string input, int index)
 		{

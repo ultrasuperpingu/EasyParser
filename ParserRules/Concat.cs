@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EasyParser.ParserRules
+namespace Octopartite.ParserRules
 {
 	public class Concat : NonTerminal
 	{
@@ -27,7 +27,7 @@ namespace EasyParser.ParserRules
 					node.Success = false;
 					//TODO: check it's working
 					//TODO: add ability to disallow backtracking before a node (like with ! in prolog) ?
-					if (BacktrackCardinalityOps)
+					if (BacktrackCardinalityOps || BacktrackChoices)
 					{
 						var backtrackres = Backtrack(node, skips);
 						if (backtrackres != null && backtrackres.Success)
@@ -61,39 +61,42 @@ namespace EasyParser.ParserRules
 		internal override ParseNode Backtrack(ParseNode node, List<Terminal> skips)
 		{
 			node.Success = false;
-			if (node.Nodes.Count == 0)
-				return node;
-			bool backtracked = false;
-			for (int i = node.Nodes.Count - 1; i >= 0; i--)
+			while (node.Nodes.Count > 0 && !node.Success)
 			{
-				var length = node.Nodes[i].Length;
-				var backtrackres = node.Nodes[i].Backtrack(skips);
-				if (backtrackres == null || !backtrackres.Success)
+				bool backtracked = false;
+				for (int i = node.Nodes.Count - 1; i >= 0; i--)
 				{
-					node.Length = backtrackres.Index + backtrackres.Length - node.Index;
-					node.Nodes.RemoveAt(i);
-				}
-				else
-				{
-					backtracked = true;
-					break;
-				}
-			}
-			if (backtracked)
-			{
-				for (int i = 0; i < Symbols.Count; i++)
-				{
-					var symbol = Symbols[i];
-					var c = symbol.Parse(node.input, node.Index + node.Length, skips);
-					if (c != null && c.Success)
+					var length = node.Nodes[i].Length;
+					var backtrackres = node.Nodes[i].Backtrack(skips);
+					if (backtrackres == null || !backtrackres.Success)
 					{
-						node.Length = c.Index + c.Length - node.Index;
-						node.Nodes.Add(c);
+						node.Length = backtrackres.Index + backtrackres.Length - node.Index;
+						node.Nodes.RemoveAt(i);
 					}
 					else
 					{
-						node.Success = false;
+						backtracked = true;
+						node.Length = backtrackres.Index + backtrackres.Length - node.Index;
 						break;
+					}
+				}
+				if (backtracked)
+				{
+					node.Success = true;
+					for (int i = node.Nodes.Count; i < Symbols.Count; i++)
+					{
+						var symbol = Symbols[i];
+						var c = symbol.Parse(node.input, node.Index + node.Length, skips);
+						if (c != null && c.Success)
+						{
+							node.Length = c.Index + c.Length - node.Index;
+							node.Nodes.Add(c);
+						}
+						else
+						{
+							node.Success = false;
+							break;
+						}
 					}
 				}
 			}

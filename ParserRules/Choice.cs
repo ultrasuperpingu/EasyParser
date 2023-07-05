@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EasyParser.ParserRules
+namespace Octopartite.ParserRules
 {
 	public class Choice : NonTerminal
 	{
@@ -58,6 +58,7 @@ namespace EasyParser.ParserRules
 				return node;
 			}
 			node.Length = 0;
+			node.Nodes.Clear();
 			if (BacktrackChoices)
 			{
 				for (int i = node.symbolIndex + 1; i < Symbols.Count; i++)

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EasyParser.ParserRules
+namespace Octopartite.ParserRules
 {
 	public class MinMaxOccurence : NonTerminal
 	{
@@ -46,7 +46,7 @@ namespace EasyParser.ParserRules
 					count++;
 				}
 			} while (c != null && c.Success && count < Max);
-			if (count < Max)
+			if (count <= Max)
 			{
 				if (node.LongestMatch == null &&
 					(c.Length > 0 || c.LongestMatch != null))
@@ -79,6 +79,7 @@ namespace EasyParser.ParserRules
 			}
 			else if (node.symbolIndex > Min) // already found at least min+1, remove one and return sucess
 			{
+				var length = node.Nodes[node.symbolIndex - 1].Length;
 				var backtrackres = node.Nodes[node.symbolIndex - 1].Backtrack(skips);
 				if (backtrackres != null && backtrackres.Success)
 				{
@@ -90,7 +91,9 @@ namespace EasyParser.ParserRules
 				node.symbolIndex--;
 				var removed = node.Nodes[node.symbolIndex];
 				node.Nodes.RemoveAt(node.symbolIndex);
-				node.Length -= removed.Length;
+				node.Length -= length;
+				if(removed.Skipped != null)
+					node.Length -= removed.Skipped.Sum(s=>s.Length);
 			}
 			else // < min and > 0: error
 			{
