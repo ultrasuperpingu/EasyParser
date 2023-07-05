@@ -1,2 +1,2 @@
-# EasyParser
+# Octopartite
 A simple backtracking parser
