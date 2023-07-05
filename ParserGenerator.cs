@@ -38,7 +38,15 @@ namespace Octopartite
 						string pattern;
 						if (IsProductionTerminal(production, out pattern))
 						{
-							decl.AppendLine("Terminal " + production.Nodes[0].Text + "=new RegexTerminal("+pattern+");");
+							if (pattern.StartsWith("R"))
+							{
+								pattern = '@' + pattern.Substring(1);
+								if(!pattern.StartsWith("@\"\\G"))
+									pattern = pattern.Insert(2, "\\G");
+								decl.AppendLine("Terminal " + production.Nodes[0].Text + " = new RegexTerminal("+pattern+");");
+							}
+							else
+								decl.AppendLine("Terminal " + production.Nodes[0].Text + " = new StringTerminal("+pattern+");");
 						}
 						else
 						{

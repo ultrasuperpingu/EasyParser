@@ -19,16 +19,17 @@ namespace Octopartite
 			ParserRules.Rule.DefaultBacktrackChoices = true;
 
 			// Start Generated Code
-			Terminal BRACKETOPEN = new RegexTerminal(@"\(");
-			Terminal BRACKETCLOSE = new RegexTerminal(@"\)");
+			Terminal BRACKETOPEN = new StringTerminal("(");
+			Terminal BRACKETCLOSE = new StringTerminal(")");
 			Terminal IDENTIFIER = new RegexTerminal(@"[a-zA-Z_][a-zA-Z0-9_]*");
-			Terminal ARROW = new RegexTerminal(@"->");
+			Terminal ARROW = new StringTerminal("->");
 			Terminal EOF = new RegexTerminal(@"$");
 			Terminal STRING = new RegexTerminal(@"\""(\\\""|[^\""])*\""");
 			Terminal VERBATIM_STRING = new RegexTerminal(@"(R|@)\""(\""\""|[^\""])*\""");
-			Terminal PIPE = new RegexTerminal(@"\|");
+			Terminal PIPE = new StringTerminal("|");
 			Terminal UNARYOPER = new RegexTerminal(@"(\*|\+|\?)");
-			Terminal SEMICOLON = new RegexTerminal(@";");
+			Terminal SEMICOLON = new StringTerminal(";");
+			Terminal WHITESPACES = new RegexTerminal(@"\G\s+");
 			Start = new Concat();
 			Concat Production = new Concat();
 			Concat Rule = new Concat();
@@ -54,6 +55,8 @@ namespace Octopartite
 			UNARYOPER.Name="UNARYOPER";
 
 			SEMICOLON.Name="SEMICOLON";
+
+			WHITESPACES.Name="WHITESPACES";
 
 			Start.Name="Start";
 			Concat concat1 = new Concat();
@@ -108,8 +111,6 @@ namespace Octopartite
 			unary12.Symbol=UNARYOPER;
 			concat9.Symbols.Add(unary12);
 			Symbol.Symbols.Add(concat9);
-
-			Terminal WHITESPACES = new RegexTerminal(@"\G\s+");
 			// End Generated Code
 
 			Skips.Add(WHITESPACES);
@@ -121,17 +122,17 @@ namespace Octopartite
 		public static void GenerateParserCode()
 		{
 			var grammarStr = @"
-				BRACKETOPEN -> @""\("";
-				BRACKETCLOSE -> @""\)"";
-				IDENTIFIER -> @""[a-zA-Z_][a-zA-Z0-9_]*"";
-				ARROW -> @""->"";
-				EOF -> @""$"";
-				STRING -> @""\""""(\\\""""|[^\""""])*\"""""";
-				VERBATIM_STRING -> @""(R|@)\""""(\""""\""""|[^\""""])*\"""""";
-				PIPE -> @""\|"";
-				UNARYOPER -> @""(\*|\+|\?)"";
-				SEMICOLON -> @"";"";
-				WHITESPACE -> @""\G\s+"";
+				BRACKETOPEN -> ""("";
+				BRACKETCLOSE -> "")"";
+				IDENTIFIER -> R""[a-zA-Z_][a-zA-Z0-9_]*"";
+				ARROW -> ""->"";
+				EOF -> R""$"";
+				STRING -> R""\""""(\\\""""|[^\""""])*\"""""";
+				VERBATIM_STRING -> R""(R|@)\""""(\""""\""""|[^\""""])*\"""""";
+				PIPE -> ""|"";
+				UNARYOPER -> R""(\*|\+|\?)"";
+				SEMICOLON -> "";"";
+				WHITESPACES -> R""\G\s+"";
 				Start -> Production * EOF;
 				Production->IDENTIFIER ARROW Rule SEMICOLON;
 				Rule->VERBATIM_STRING | STRING | Subrule;

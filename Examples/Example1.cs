@@ -19,9 +19,9 @@ namespace Octopartite.Examples
 
 			// Start Generated Code
 			Terminal ID = new RegexTerminal(@"[a-z_][a-z_0-9]*");
-			Terminal SQUAREBRACKETOPEN = new RegexTerminal(@"\[");
-			Terminal SQUAREBRACKETCLOSE = new RegexTerminal(@"\]");
-			Terminal COMMA = new RegexTerminal(@",");
+			Terminal SQUAREBRACKETOPEN = new StringTerminal(@"[");
+			Terminal SQUAREBRACKETCLOSE = new StringTerminal(@"]");
+			Terminal COMMA = new StringTerminal(@",");
 			Terminal _EOF_ = new RegexTerminal(@"$");
 			Concat List = new Concat();
 			Start = new Concat();
@@ -61,14 +61,14 @@ namespace Octopartite.Examples
 		public static void GenerateParserCode()
 		{
 			var grammarStr = @"
-				ID ->@""[a-z_][a-z_0-9]*"";
-				SQUAREBRACKETOPEN -> @""\["";
-				SQUAREBRACKETCLOSE -> @""\]"";
+				ID ->R""[a-z_][a-z_0-9]*"";
+				SQUAREBRACKETOPEN -> @""["";
+				SQUAREBRACKETCLOSE -> @""]"";
 				COMMA -> @"","";
-				_EOF_ -> @""$"";
+				_EOF_ -> R""$"";
 				List-> SQUAREBRACKETOPEN ID* SQUAREBRACKETCLOSE;
 				Start -> List _EOF_;
-				WHITESPACE -> @""\G\s+"";
+				WHITESPACE -> R""\G\s+"";
 			";
 			Console.WriteLine("// Example1 parser code: copy/paste it in Example1.cs (in constructor)");
 			Console.WriteLine("//  and replace line:");

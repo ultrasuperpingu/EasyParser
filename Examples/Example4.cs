@@ -12,7 +12,7 @@ namespace Octopartite.Examples
 	/// So this need to allow Cardinal Operators backtracking.<br/>
 	/// By doing that, the end match as an ID is backtracked and then parsed correctly as an END token.<br/>
 	/// <br/>
-	/// Again, could (and should) be avoided by more carrefully written terminals regexes.
+	/// Again, could (and should) be avoided by more carrefully written terminals regex.
 	/// </summary>
 	public class Example4 : AbstractExample
 	{
@@ -22,10 +22,10 @@ namespace Octopartite.Examples
 			Rule.DefaultBacktrackChoices = false;
 
 			// Start Generated Code
-			Terminal LIST = new RegexTerminal(@"list");
-			Terminal END = new RegexTerminal(@"end");
-			Terminal ID = new RegexTerminal(@"[a-z_][a-z_0-9]*");
-			Terminal _EOF_ = new RegexTerminal(@"$");
+			Terminal LIST = new StringTerminal(@"list");
+			Terminal END = new StringTerminal(@"end");
+			Terminal ID = new RegexTerminal(@"\G[a-z_][a-z_0-9]*");
+			Terminal _EOF_ = new RegexTerminal(@"\G$");
 			Concat List = new Concat();
 			Start = new Concat();
 			Terminal WHITESPACE = new RegexTerminal(@"\G\s+");
@@ -63,13 +63,13 @@ namespace Octopartite.Examples
 			var grammarStr = @"
 				LIST -> @""list"";
 				END -> @""end"";
-				ID ->@""[a-z_][a-z_0-9]*"";
-				_EOF_ -> @""$"";
+				ID -> R""[a-z_][a-z_0-9]*"";
+				_EOF_ -> R""$"";
 				List->  LIST ID* END;
 				Start -> List _EOF_;
-				WHITESPACE -> @""\G\s+"";
+				WHITESPACE -> R""\G\s+"";
 			";
-			Console.WriteLine("// Example3 parser code: copy/paste it in Example3.cs (in constructor)");
+			Console.WriteLine("// Example4 parser code: copy/paste it in Example4.cs (in constructor)");
 			Console.WriteLine("//  and replace line:");
 			Console.WriteLine("//    \"Concat Start = new Concat();\"");
 			Console.WriteLine("//  by");

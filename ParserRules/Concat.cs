@@ -25,7 +25,7 @@ namespace Octopartite.ParserRules
 				else
 				{
 					node.Success = false;
-					//TODO: check it's working
+					//TODO: make it work when backtracking
 					//TODO: add ability to disallow backtracking before a node (like with ! in prolog) ?
 					if (BacktrackCardinalityOps || BacktrackChoices)
 					{

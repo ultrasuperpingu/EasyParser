@@ -24,11 +24,11 @@ namespace Octopartite.Examples
 			Rule.DefaultBacktrackChoices = false;
 
 			// Start Generated Code
-			Terminal ID = new RegexTerminal(@"[a-z_][a-z_0-9]*");
-			Terminal SQUAREBRACKETOPEN = new RegexTerminal(@"\[");
-			Terminal SQUAREBRACKETCLOSE = new RegexTerminal(@"\]");
-			Terminal COMMA = new RegexTerminal(@",");
-			Terminal _EOF_ = new RegexTerminal(@"$");
+			Terminal ID = new RegexTerminal(@"\G[a-z_][a-z_0-9]*");
+			Terminal SQUAREBRACKETOPEN = new StringTerminal("[");
+			Terminal SQUAREBRACKETCLOSE = new StringTerminal("]");
+			Terminal COMMA = new StringTerminal(",");
+			Terminal _EOF_ = new RegexTerminal(@"\G$");
 			Concat List = new Concat();
 			Concat DelimitedList = new Concat();
 			Start = new Concat();
@@ -87,15 +87,15 @@ namespace Octopartite.Examples
 		public static void GenerateParserCode()
 		{
 			var grammarStr = @"
-				ID ->@""[a-z_][a-z_0-9]*"";
-				SQUAREBRACKETOPEN -> @""\["";
-				SQUAREBRACKETCLOSE -> @""\]"";
-				COMMA -> @"","";
-				_EOF_ -> @""$"";
+				ID -> R""[a-z_][a-z_0-9]*"";
+				SQUAREBRACKETOPEN -> ""["";
+				SQUAREBRACKETCLOSE -> ""]"";
+				COMMA -> "","";
+				_EOF_ -> R""$"";
 				List->  ID (COMMA ID)*;
 				DelimitedList -> SQUAREBRACKETOPEN List? SQUAREBRACKETCLOSE;
 				Start -> (DelimitedList SQUAREBRACKETOPEN|DelimitedList SQUAREBRACKETCLOSE) _EOF_;
-				WHITESPACE -> @""\G\s+"";
+				WHITESPACE -> R""\G\s+"";
 			";
 			Console.WriteLine("// Example3 parser code: copy/paste it in Example3.cs (in constructor)");
 			Console.WriteLine("//  and replace line:");

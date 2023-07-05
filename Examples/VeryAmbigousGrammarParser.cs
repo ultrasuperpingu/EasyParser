@@ -18,14 +18,14 @@ namespace Octopartite.Examples
 			Rule.DefaultBacktrackChoices = true;
 
 			// Start Generated Code
-			Terminal ID = new RegexTerminal(@"[a-z_][a-z_0-9]*");
-			Terminal ID_SUFFIX = new RegexTerminal(@"[a-z_][a-z_0-9]*_SUFFIX");
-			Terminal NUMBER = new RegexTerminal(@"[0-9]+");
-			Terminal LIST = new RegexTerminal(@"list");
-			Terminal END = new RegexTerminal(@"end");
-			Terminal TEST1 = new RegexTerminal(@"TEST1");
-			Terminal TEST2 = new RegexTerminal(@"TEST2");
-			Terminal _EOF_ = new RegexTerminal(@"$");
+			Terminal ID = new RegexTerminal(@"\G[a-z_][a-z_0-9]*");
+			Terminal ID_SUFFIX = new RegexTerminal(@"\G[a-z_][a-z_0-9]*_SUFFIX");
+			Terminal NUMBER = new RegexTerminal(@"\G[0-9]+");
+			Terminal LIST = new StringTerminal(@"list");
+			Terminal END = new StringTerminal(@"end");
+			Terminal TEST1 = new StringTerminal(@"TEST1");
+			Terminal TEST2 = new StringTerminal(@"TEST2");
+			Terminal _EOF_ = new RegexTerminal(@"\G$");
 			Concat List = new Concat();
 			Start = new Concat();
 			Terminal WHITESPACE = new RegexTerminal(@"\G\s+");
@@ -86,6 +86,7 @@ namespace Octopartite.Examples
 			Start.Symbols.Add(concat8);
 
 			WHITESPACE.Name="WHITESPACE";
+			// End Generated Code
 
 			Skips.Add(WHITESPACE);
 		}
@@ -93,17 +94,17 @@ namespace Octopartite.Examples
 		public static void GenerateParserCode()
 		{
 			var grammarStr = @"
-				ID ->@""[a-z_][a-z_0-9]*"";
-				ID_SUFFIX ->@""[a-z_][a-z_0-9]*_SUFFIX"";
-				NUMBER ->@""[0-9]+"";
+				ID -> R""[a-z_][a-z_0-9]*"";
+				ID_SUFFIX -> R""[a-z_][a-z_0-9]*_SUFFIX"";
+				NUMBER -> R""[0-9]+"";
 				LIST -> @""list"";
 				END -> @""end"";
 				TEST1 -> @""TEST1"";
 				TEST2 -> @""TEST2"";
-				_EOF_ -> @""$"";
+				_EOF_ -> R""$"";
 				List-> (ID|ID_SUFFIX)? (ID NUMBER|LIST END) LIST ID* END;
 				Start -> (List TEST1|List TEST2) _EOF_;
-				WHITESPACE -> @""\G\s+"";
+				WHITESPACE -> R""\G\s+"";
 			";
 			GrammarUtil.GenerateParserCode(grammarStr);
 		}
