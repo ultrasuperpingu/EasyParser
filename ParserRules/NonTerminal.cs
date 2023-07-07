@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Octopartite.ParserRules
 {
@@ -30,6 +29,26 @@ namespace Octopartite.ParserRules
 				else
 					(symbol as NonTerminal).CollectFirstTerminals(visited, firstTerminals);
 			}
+		}
+
+		protected virtual void SaveLongestMatch(ParseNode node, ParseNode bestChild)
+		{
+			if (node.Root.LongestMatch == null || node.Root.LongestMatch.End < node.End)
+			{
+				node.Root.LongestMatch = new ParseNode(node.Root);
+				//node.LongestMatch.Length = bestChild.Index + bestChild.Length - node.Index;
+				//node.LongestMatch.Nodes.Add(bestChild);
+				//bestChild.Parent = node.LongestMatch;
+			}
+			/*if ((node.LongestMatch == null || node.LongestMatch.Length < node.Length) && bestChild != null)
+			{
+				node.LongestMatch = new ParseNode(node);
+				if (bestChild.LongestMatch != null)
+					bestChild = bestChild.LongestMatch;
+				node.LongestMatch.Length = bestChild.Index + bestChild.Length - node.Index;
+				node.LongestMatch.Nodes.Add(bestChild);
+				bestChild.Parent = node.LongestMatch;
+			}*/
 		}
 	}
 }

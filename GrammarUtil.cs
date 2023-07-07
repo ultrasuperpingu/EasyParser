@@ -14,7 +14,7 @@ namespace Octopartite
 			var node = new GrammarParser().Parse(grammarStr);
 			if (node.Length != grammarStr.Length && node.LongestMatch != null)
 			{
-				var (line, col, posLine) = grammarStr.GetLineColumnLinePos(node.LongestMatch.Length);//.Take(node.LongestMatch.Length).Count(c => c == '\n') + 1;
+				var (line, col, posLine) = grammarStr.GetLineColumnLinePos(node.LongestMatch.Length);
 				var posLineP1 = grammarStr.GetLinePos(line+1);
 				Console.WriteLine("Error ("+line+","+col+"): ");
 				Console.WriteLine(grammarStr.Substring(posLine, posLineP1 - posLine).Trim());
@@ -25,7 +25,6 @@ namespace Octopartite
 			}
 			node.Simplify();
 
-			//Console.WriteLine(node.PrintTree());
 			Console.WriteLine(new ParserGenerator().Generate(node));
 		}
 

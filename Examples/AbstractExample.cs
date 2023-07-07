@@ -3,11 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Octopartite.Examples
 {
-	public class AbstractExample
+	public abstract class AbstractExample
 	{
 		public Concat Start = null;
 		public List<Terminal> Skips = new List<Terminal>();

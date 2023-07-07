@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Octopartite.ParserRules
 {
@@ -33,7 +32,8 @@ namespace Octopartite.ParserRules
 			}
 			if (!node.Success)
 			{
-				if ((node.LongestMatch == null || node.LongestMatch.Length < node.Length) && best != null)
+				SaveLongestMatch(node, best);
+				/*if ((node.LongestMatch == null || node.LongestMatch.Length < node.Length) && best != null)
 				{
 					node.LongestMatch = new ParseNode(node);
 					if (best.LongestMatch != null)
@@ -41,11 +41,12 @@ namespace Octopartite.ParserRules
 					node.LongestMatch.Length = best.Index + best.Length - index;
 					node.LongestMatch.Nodes.Add(best);
 					best.Parent = node.LongestMatch;
-				}
+				}*/
 
 			}
 			return node;
 		}
+
 
 		internal override ParseNode Backtrack(ParseNode node, List<Terminal> skips)
 		{

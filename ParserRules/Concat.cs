@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Octopartite.ParserRules
 {
@@ -35,7 +34,8 @@ namespace Octopartite.ParserRules
 							return backtrackres;
 						}
 					}
-					if (node.LongestMatch == null &&
+					SaveLongestMatch(node, c);
+					/*if (node.LongestMatch == null &&
 						(node.Length > 0 || c.Length > 0 || c.LongestMatch != null && c.LongestMatch.Length > 0))
 					{
 						node.LongestMatch = new ParseNode(node);
@@ -44,16 +44,17 @@ namespace Octopartite.ParserRules
 						node.LongestMatch.Length = c.Index + c.Length - index;
 						node.LongestMatch.Nodes.Add(c);
 						c.Parent = node.LongestMatch;
-					}
+					}*/
 					break;
 				}
-				if (node.LongestMatch == null && c.LongestMatch != null)
+				SaveLongestMatch(node, c);
+				/*if (node.LongestMatch == null && c.LongestMatch != null)
 				{
 					node.LongestMatch = new ParseNode(node);
 					node.LongestMatch.Length = c.LongestMatch.Index + c.LongestMatch.Length - index;
 					node.LongestMatch.Nodes.Add(c.LongestMatch);
 					c.LongestMatch.Parent = node.LongestMatch;
-				}
+				}*/
 			}
 			return node;
 		}

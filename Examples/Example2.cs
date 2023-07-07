@@ -62,26 +62,26 @@ namespace Octopartite.Examples
 
 			Skips.Add(WHITESPACE);
 		}
+		public static string GrammarString => @"
+			ID -> R""[a-z_][a-z_0-9]*"";
+			SQUAREBRACKETOPEN -> @""["";
+			SQUAREBRACKETCLOSE -> @""]"";
+			COMMA -> @"","";
+			_EOF_ -> R""$"";
+			List->  ID (COMMA ID)*;
+			Start -> SQUAREBRACKETOPEN List? SQUAREBRACKETCLOSE _EOF_;
+			WHITESPACE -> R""\G\s+"";
+		";
 
 		public static void GenerateParserCode()
 		{
-			var grammarStr = @"
-				ID -> R""[a-z_][a-z_0-9]*"";
-				SQUAREBRACKETOPEN -> @""["";
-				SQUAREBRACKETCLOSE -> @""]"";
-				COMMA -> @"","";
-				_EOF_ -> R""$"";
-				List->  ID (COMMA ID)*;
-				Start -> SQUAREBRACKETOPEN List? SQUAREBRACKETCLOSE _EOF_;
-				WHITESPACE -> R""\G\s+"";
-			";
 			Console.WriteLine("// Example2 parser code: copy/paste it in Example2.cs (in constructor)");
 			Console.WriteLine("//  and replace line:");
 			Console.WriteLine("//    \"Concat Start = new Concat();\"");
 			Console.WriteLine("//  by");
 			Console.WriteLine("//    \"Start = new Concat();\"");
 			Console.WriteLine("// Start Generated Code");
-			GrammarUtil.GenerateParserCode(grammarStr);
+			GrammarUtil.GenerateParserCode(GrammarString);
 			Console.WriteLine("// End Generated Code");
 		}
 	}

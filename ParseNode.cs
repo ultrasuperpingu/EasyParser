@@ -10,20 +10,14 @@ namespace Octopartite
 {
 	public class ParseNode
 	{
-		public ParseNode(Rule s, string input, int index)
-		{
-			Symbol = s;
-			this.input = input;
-			Index = index;
-		}
-		public ParseNode(Rule s, string input, int index, int length)
+		public ParseNode(Rule s, string input, int index, int length = 0)
 		{
 			Symbol = s;
 			this.input = input;
 			Index = index;
 			Length = length;
 		}
-		// protected?!?
+		
 		public ParseNode(ParseNode node, bool copyChild = true)
 		{
 			Symbol = node.Symbol;
@@ -43,6 +37,13 @@ namespace Octopartite
 			}
 		}
 
+		public virtual ParseNode CreateNode(Rule s, string input, int index, int length = 0)
+		{
+			var node = new ParseNode(s, input, index, length);
+			node.Parent = this;
+			return node;
+		}
+
 		internal string input;
 		public int Index { get; set; } = 0;
 		public int Length { get; set; } = 0;
@@ -59,6 +60,14 @@ namespace Octopartite
 		public List<ParseNode> Skipped = null;
 		public ParseNode LongestMatch = null;
 		public ParseNode Parent { get; set; }
+		public ParseNode Root {
+			get
+			{
+				if (Parent == null)
+					return this;
+				return Parent.Root;
+			}
+		}
 		public string Text
 		{
 			get
@@ -76,7 +85,7 @@ namespace Octopartite
 				return Nodes[Nodes.Count - 1].LastNode;
 			}
 		}
-		public ParseNode LastNamedNode
+		/*public ParseNode LastNamedNode
 		{
 			get
 			{
@@ -100,7 +109,7 @@ namespace Octopartite
 				}
 				return n;
 			}
-		}
+		}*/
 		
 		public ParseNode GetTokenNode(string name, int index)
 		{
