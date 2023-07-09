@@ -1,52 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Octopartite.ParserRules
 {
 	public class Choice : NonTerminal
 	{
-		public override ParseNode Parse(string input, int index, List<Terminal> skips)
+		internal override ParseNode Parse(ParseNode parent, List<Terminal> skips)
 		{
-			ParseNode node = new ParseNode(this, input, index);
+			var input = parent.input;
+			var index = parent.End;
+			ParseNode node = parent.CreateNode(this, input, index);
 			node.Success = false;
-			ParseNode best = null;
+			ParseNode bestFailed = null;
 			for (int i = node.symbolIndex + 1; i < Symbols.Count; i++)
 			{
 				Rule symbol = Symbols[i];
-				var c = symbol.Parse(node.input, node.Index, skips);
+				var c = symbol.Parse(node, skips);
 				if (c != null && c.Success)
 				{
 					node.Success = true;
 					node.Length = c.Index + c.Length - index;
 					node.Nodes.Add(c);
-					c.Parent = node;
+					//c.Parent = node;
 					node.symbolIndex = i;
 					break;
 				}
-				else if (best == null || best.Length < c.Length)
+				else if (bestFailed == null || bestFailed.Length < c.Length)
 				{
-					best = c;
+					bestFailed = c;
 				}
 			}
 			if (!node.Success)
 			{
-				SaveLongestMatch(node, best);
-				/*if ((node.LongestMatch == null || node.LongestMatch.Length < node.Length) && best != null)
-				{
-					node.LongestMatch = new ParseNode(node);
-					if (best.LongestMatch != null)
-						best = best.LongestMatch;
-					node.LongestMatch.Length = best.Index + best.Length - index;
-					node.LongestMatch.Nodes.Add(best);
-					best.Parent = node.LongestMatch;
-				}*/
-
+				SaveLongestMatch(node, bestFailed);
 			}
 			return node;
 		}
-
 
 		internal override ParseNode Backtrack(ParseNode node, List<Terminal> skips)
 		{
@@ -65,7 +57,7 @@ namespace Octopartite.ParserRules
 				for (int i = node.symbolIndex + 1; i < Symbols.Count; i++)
 				{
 					Rule symbol = Symbols[i];
-					var c = symbol.Parse(node.input, node.Index, skips);
+					var c = symbol.Parse(node, skips);
 					if (c != null && c.Success)
 					{
 						node.Success = true;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -19,6 +20,18 @@ namespace Octopartite.ParserRules
 			if (m.Success && m.Index == index)
 			{
 				ParseNode node = new ParseNode(this, input, index, m.Length);
+				node.Success = true;
+				return node;
+			}
+			return new ParseNode(this, input, index);
+		}
+		protected override ParseNode Parse(ParseNode parent, int index)
+		{
+			var input = parent.input;
+			var m = r.Match(input, index);
+			if (m.Success && m.Index == index)
+			{
+				ParseNode node = parent.CreateNode(this, input, index, m.Length);
 				node.Success = true;
 				return node;
 			}

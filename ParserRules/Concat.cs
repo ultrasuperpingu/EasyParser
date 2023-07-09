@@ -7,19 +7,21 @@ namespace Octopartite.ParserRules
 {
 	public class Concat : NonTerminal
 	{
-		public override ParseNode Parse(string input, int index, List<Terminal> skips)
+		internal override ParseNode Parse(ParseNode parent, List<Terminal> skips)
 		{
-			ParseNode node = new ParseNode(this, input, index);
+			var input = parent.input;
+			var index = parent.End;
+			ParseNode node = parent.CreateNode(this, input, parent.End);
 			node.Success = true;
 			for (int i = 0; i < Symbols.Count; i++)
 			{
 				var symbol = Symbols[i];
-				var c = symbol.Parse(input, index + node.Length, skips);
+				var c = symbol.Parse(node, skips);
 				if (c != null && c.Success)
 				{
 					node.Length = c.Index + c.Length - index;
 					node.Nodes.Add(c);
-					c.Parent = node;
+					//c.Parent = node;
 				}
 				else
 				{
@@ -35,30 +37,12 @@ namespace Octopartite.ParserRules
 						}
 					}
 					SaveLongestMatch(node, c);
-					/*if (node.LongestMatch == null &&
-						(node.Length > 0 || c.Length > 0 || c.LongestMatch != null && c.LongestMatch.Length > 0))
-					{
-						node.LongestMatch = new ParseNode(node);
-						if (c.LongestMatch != null)
-							c = c.LongestMatch;
-						node.LongestMatch.Length = c.Index + c.Length - index;
-						node.LongestMatch.Nodes.Add(c);
-						c.Parent = node.LongestMatch;
-					}*/
 					break;
 				}
 				SaveLongestMatch(node, c);
-				/*if (node.LongestMatch == null && c.LongestMatch != null)
-				{
-					node.LongestMatch = new ParseNode(node);
-					node.LongestMatch.Length = c.LongestMatch.Index + c.LongestMatch.Length - index;
-					node.LongestMatch.Nodes.Add(c.LongestMatch);
-					c.LongestMatch.Parent = node.LongestMatch;
-				}*/
 			}
 			return node;
 		}
-
 		internal override ParseNode Backtrack(ParseNode node, List<Terminal> skips)
 		{
 			node.Success = false;
@@ -87,7 +71,7 @@ namespace Octopartite.ParserRules
 					for (int i = node.Nodes.Count; i < Symbols.Count; i++)
 					{
 						var symbol = Symbols[i];
-						var c = symbol.Parse(node.input, node.Index + node.Length, skips);
+						var c = symbol.Parse(node, skips);
 						if (c != null && c.Success)
 						{
 							node.Length = c.Index + c.Length - node.Index;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Octopartite.ParserRules
@@ -28,42 +29,34 @@ namespace Octopartite.ParserRules
 			Min = min;
 			Max = max;
 		}
-		public override ParseNode Parse(string input, int index, List<Terminal> skips)
+
+		internal override ParseNode Parse(ParseNode parent, List<Terminal> skips)
 		{
-			ParseNode node = new ParseNode(this, input, index);
+			var input = parent.input;
+			var index = parent.End;
+			ParseNode node = parent.CreateNode(this, input, index);
 			ParseNode c = null;
 			int count = 0;
 			do
 			{
-				c = Symbol.Parse(node.input, node.Index + node.Length, skips);
+				c = Symbol.Parse(node, skips);
 				if (c != null && c.Success)
 				{
 					node.Success = true;
 					node.Length = c.Index + c.Length - index;
 					node.Nodes.Add(c);
-					c.Parent = node;
+					//c.Parent = node;
 					count++;
 				}
 			} while (c != null && c.Success && count < Max);
 			//if (count <= Max)
 			{
 				SaveLongestMatch(node, c);
-				/*if (node.LongestMatch == null &&
-					(c.Length > 0 || c.LongestMatch != null))
-				{
-					node.LongestMatch = new ParseNode(node);
-					if (c.LongestMatch != null)
-						c = c.LongestMatch;
-					node.LongestMatch.Length = c.Index + c.Length - index;
-					node.LongestMatch.Nodes.Add(c);
-					c.Parent = node.LongestMatch;
-				}*/
 			}
 			node.Success = count >= Min;
 			node.symbolIndex = count;
 			return node;
 		}
-
 		internal override ParseNode Backtrack(ParseNode node, List<Terminal> skips)
 		{
 			node.Success = false;

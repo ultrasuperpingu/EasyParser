@@ -33,12 +33,12 @@ namespace Octopartite.ParserRules
 
 		protected virtual void SaveLongestMatch(ParseNode node, ParseNode bestChild)
 		{
-			if (node.Root.LongestMatch == null || node.Root.LongestMatch.End < node.End)
+			if (node.Root.LongestMatch == null || node.Root.LongestMatch.End < bestChild.End)
 			{
+				node.Nodes.Add(bestChild);
 				node.Root.LongestMatch = new ParseNode(node.Root);
-				//node.LongestMatch.Length = bestChild.Index + bestChild.Length - node.Index;
-				//node.LongestMatch.Nodes.Add(bestChild);
-				//bestChild.Parent = node.LongestMatch;
+				node.Root.LongestMatch.Length = bestChild.End -node.Root.LongestMatch.Index;
+				node.Nodes.Remove(bestChild);
 			}
 			/*if ((node.LongestMatch == null || node.LongestMatch.Length < node.Length) && bestChild != null)
 			{

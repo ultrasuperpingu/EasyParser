@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Octopartite.ParserRules
@@ -13,14 +14,17 @@ namespace Octopartite.ParserRules
 		}
 		public string Pattern { get; set; }
 		public override bool IsTerminal => true;
-		public override ParseNode Parse(string input, int index, List<Terminal> skips)
+
+		internal override ParseNode Parse(ParseNode parent, List<Terminal> skips)
 		{
+			var input = parent.input;
+			var index = parent.End;
 			var skipped = Skip(input, index, skips);
 			if (skipped.Count > 0)
 			{
 				index = skipped[skipped.Count - 1].Index + skipped[skipped.Count - 1].Length;
 			}
-			var node = Parse(input, index);
+			var node = Parse(parent, index);
 			if (node.Success)
 				node.Skipped = skipped;
 			return node;
@@ -46,6 +50,7 @@ namespace Octopartite.ParserRules
 			return skipped;
 		}
 		protected abstract ParseNode Parse(string input, int index);
+		protected abstract ParseNode Parse(ParseNode parent, int index);
 
 		internal override ParseNode Backtrack(ParseNode node, List<Terminal> skips)
 		{
